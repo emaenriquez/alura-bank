@@ -83,7 +83,7 @@
         </fieldset>
         <fieldset class="formulario__campo">
           <label class="campo__etiqueta" for="cuil">CUIL/CUIT (Solo números)</label>
-          <input name="cuil" id="cuil" class="campo__completo campo__completo--menor" type="text" minlength="10" maxlength="14" required/>
+          <input name="cuil" id="cuil" class="campo__completo campo__completo--menor" type="text" minlength="10" maxlength="14" pattern="\d{2}[-\/]?\d{8}[-\/]?\d{1}" required/>
           <span class="mensaje-error"></span>
         </fieldset>
         <fieldset class="formulario__campo">
@@ -166,6 +166,7 @@
       </h2>
     </section>
   </footer>
+  <script src="../js/main.js" type="module"></script>
 </body>
 
 </html>
