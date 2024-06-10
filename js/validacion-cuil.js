@@ -1,23 +1,20 @@
-
-export default function esUnCuil(campo){
-    const cuil = campo.value.replace(/[-\/]/g, "")
-    // tieneNumerosRepetidos(cuil)
-    // validarPrimerosDigitos(cuil)
-    // validarDigitoValidador(cuil)
-    if (tieneNumerosRepetidos(cuil)) {
-        console.log('valores repetidos')
-    } else {
-        if(validarPrimerosDigitos(cuil) && validarDigitoValidador(cuil)){
-            console.log("cuil no valido")
+export default function esUnCUIT(campo) {
+    const cuit = campo.value.replace(/\-/g, "");
+    if (!tieneCaracteresRepetidos(cuit)) {
+        if (validarPrimerosDigitosCUIT(cuit) && validarDigitoVerificador(cuit)) {
+            // console.log("el Cuit existe");
         } else {
-            console.log("cuil no existe")
+            campo.setCustomValidity("No es un código válido");
+            // console.log("el Cuit NO existe");
         }
+    } else {
+        console.log("Números repetidos");
+        campo.setCustomValidity("Son números repetidos");
     }
 }
 
-
-function tieneNumerosRepetidos(cuil) {
-    const NumerosRepetidos = [
+function tieneCaracteresRepetidos(cuit) {
+    const numerosRepetidos = [
         "00000000000",
         "11111111111",
         "22222222222",
@@ -28,29 +25,35 @@ function tieneNumerosRepetidos(cuil) {
         "77777777777",
         "88888888888",
         "99999999999",
-    ]
-    return NumerosRepetidos.includes(cuil)
+    ];
+    return numerosRepetidos.includes(cuit);
 }
 
-function validarPrimerosDigitos(cuil) {
-    let primerosDigitos = cuil.substr(0,2)
-    let digitosValidados = ['20','22','24','27','30','33','34']
-    return digitosValidados.includes(primerosDigitos)
+/* Validar primeros digitos */
+function validarPrimerosDigitosCUIT(cuit) {
+    let primerosDigitos = Number(cuit.slice(0, 2)); //o substr
+    let digitosValidos = [20, 23, 24, 27, 30, 33, 34];
+
+    return digitosValidos.includes(primerosDigitos); // Verificar los primeros dos dígitos
 }
 
-function validarDigitoValidador(cuil) {
+//Validar digito verificador
+function validarDigitoVerificador(cuit) {
+    let digitoVerificador = Number(cuit.slice(-1)); //o substring
+
+    let digitos = cuit.substr(0, 10).split("").map(Number);
+
     let acumulado = 0;
-    const factores = [5,4,3,2,7,6,5,4,3,2];
-    for (let i = 0; i < 10; i++) {
-        acumulado += parseInt(cuil[i],10) * factores[i];        
+    let factores = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+
+    for (let i = 0; i < digitos.length; i++) {
+        acumulado += digitos[i] * factores[i];
     }
-    let validadorTeorico = 11 - (acumulado % 11);
-    
-    if(validadorTeorico == 11) {
-        validadorTeorico = 0;
-    } else if(validadorTeorico == 10) {
-        validadorTeorico = 9;
+
+    let verificador = 11 - (acumulado % 11);
+    if (verificador === 11) {
+        verificador = 0;
     }
-    const digitoVerifidor = parseInt(cuil[10],10);
-    return digitoVerifidor == validadorTeorico
+
+    return digitoVerificador === verificador;
 }

@@ -1,21 +1,52 @@
+import esUnCUIT from "./validar-cuit.js";
+import esMayorDeEdad from "./validar-edad.js";
+import { tiposError, mensajes } from "./customErrors.js";
 
-import { esUnCuil } from "./validacion-cuil.js";
-import { esMayorEdad } from "./validar-edad.js";
+const camposDeFormulario = document.querySelectorAll("[required");
+const formulario = document.querySelector("[data-formulario]");
 
-const campoFormulario = document.querySelectorAll('[required]');
+formulario.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const listaRespuestas = {
+        nombre: e.target.elements["nombre"].value,
+        email: e.target.elements["email"].value,
+        identificacion: e.target.elements["identificacion"].value,
+        cuil: e.target.elements["cuil"].value,
+        fecha_nacimiento: e.target.elements["fecha_nacimiento"].value,
+    };
+    localStorage.setItem("registro", JSON.stringify(listaRespuestas));
+    window.location.href = "./abrir-cuenta-form-2.html";
+});
 
-campoFormulario.forEach((campo)=>{
-    campo.addEventListener('blur',()=> verificarCampo(campo))
-})
-
+camposDeFormulario.forEach((campo) => {
+    campo.addEventListener("blur", () => verificarCampo(campo));
+    /* caputar evento invalid */
+    campo.addEventListener("invalid", (evento) => evento.preventDefault());
+});
 
 function verificarCampo(campo) {
-    if(campo.name == 'cuil' && campo.value.length >= 11) {
-        esUnCuil(campo)
-    }
+    let mensaje = "";
+    campo.setCustomValidity("");
 
-    if(campo.name == "fecha_nacimiento" && campo.value != "") {
-        esMayorEdad(campo)
+    if (campo.name == "cuil" && campo.value.length >= 11) {
+        esUnCUIT(campo);
     }
+    if (campo.name == "fecha_nacimiento" && campo.value != "") {
+        esMayorDeEdad(campo);
+    }
+    //campos validity
+    tiposError.forEach((error) => {
+        if (campo.validity[error]) {
+            mensaje = mensajes[campo.name][error];
+        }
+    });
 
+    const mensajeError = campo.parentNode.querySelector(".mensaje-error");
+    const validarInputCheck = campo.checkValidity();
+
+    if (!validarInputCheck) {
+        mensajeError.textContent = mensaje;
+    } else {
+        mensajeError.textContent = "";
+    }
 }
